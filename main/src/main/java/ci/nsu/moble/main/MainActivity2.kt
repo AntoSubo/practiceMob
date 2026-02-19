@@ -44,17 +44,20 @@ class MainActivity2 : ComponentActivity() {
             }
         }
     }
+    val colors = mapOf( // ключ значение для переменноц вал неизменяемой. т.е. чтобы при написании строк, мы могли найти элемент
+        "red" to Color.Red,
+        "green" to Color.Green,
+        "blue" to Color.Blue,
+        "yellow" to Color.Yellow,
+        "magenta" to Color.Magenta
+    )
     @Composable
     fun ColorScreen(modifier: Modifier = Modifier) {
-        val colors = mapOf( // ключ значение для переменноц вал неизменяемой. т.е. чтобы при написании строк, мы могли найти элемент
-            "red" to Color.Red,
-            "green" to Color.Green,
-            "blue" to Color.Blue,
-            "yellow" to Color.Yellow,
-        )
+
+
         var userInput by remember { mutableStateOf("") } // переменная изменяемая для ввода строк, делегируетчя для compose, запоминается, по умолчанию пустая, ибо пока юзер не введет что либо, должна быть пустй
 
-        var buttonColor by remember {mutableStateOf(Color.White)} // та же история но для кнопки
+        var buttonColor by remember {mutableStateOf(Color.Gray)} // та же история но для кнопки
 
         Column(modifier.padding(16.dp)) { // контейнер который сложит все эелменты вертикально, дополнительно отступ чтоб по красоте
             TextField(
@@ -70,6 +73,10 @@ class MainActivity2 : ComponentActivity() {
                     {
                         buttonColor = color
                     }
+                    else
+                    {
+                        Log.d("ColorScreen", "Не найден $userInput")
+                    }
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = buttonColor
@@ -80,7 +87,7 @@ class MainActivity2 : ComponentActivity() {
             colors.forEach { (name, color) ->
                 Row {
                     Box(
-                        modifier = Modifier.size(24.dp).background(color)
+                        modifier = Modifier.size(32.dp).background(color)
                     )
 
                 }
