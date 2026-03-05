@@ -1,13 +1,16 @@
-package ci.nsu.moble.main
+package ci.nsu.mobile.main
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,9 +21,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ci.nsu.moble.main.ui.theme.PracticeTheme
+import ci.nsu.mobile.main.ui.theme.PracticeTheme
 
 
 class MainActivity : ComponentActivity() {
@@ -52,7 +54,7 @@ fun MainScreenActivity(modifier: Modifier = Modifier) {
         OutlinedTextField(
             value = text,
             onValueChange = { text = it },
-            label = { Text("накалякайте чтонибуд    ") },
+            label = { Text("накалякайте чтонибудь") },
             modifier = Modifier.fillMaxWidth()
         )
         Button(
@@ -66,13 +68,5 @@ fun MainScreenActivity(modifier: Modifier = Modifier) {
         ) {
             Text("Open SecondActivity")
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    PracticeTheme {
-        MainScreenActivity()
     }
 }
