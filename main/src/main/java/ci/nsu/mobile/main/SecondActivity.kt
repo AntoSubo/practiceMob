@@ -40,10 +40,13 @@ import androidx.compose.ui.Alignment
 import ci.nsu.mobile.main.ui.theme.PracticeTheme
 
 // TODO: crate sealed class with 3 routes
-sealed class Screen(val route: String) {
-    object Home : Screen("home")
-    object ScreenOne : Screen("screen_one")
-    object ScreenTwo : Screen("screen_two")
+sealed class Screen( val route: String,
+val icon: androidx.compose.ui.graphics.vector.ImageVector,
+val title: String
+) {
+    object Home : Screen("home", Icons.Filled.Home, "Home")
+    object ScreenOne : Screen("screen_one", Icons.Filled.List, "Screen One")
+    object ScreenTwo : Screen("screen_two", Icons.Filled.Settings, "Screen Two")
 }
 
 class SecondActivity : ComponentActivity() {
@@ -71,7 +74,7 @@ fun SecondActivityScreen() {
     if (context is Activity) {
         receivedText = context.intent.getStringExtra("text_data") ?: "No text received"
     }
-
+    val screens = listOf(Screen.Home, Screen.ScreenOne, Screen.ScreenTwo)
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -97,72 +100,27 @@ fun SecondActivityScreen() {
         )
     },
         bottomBar = {
-        NavigationBar {
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentRoute = navBackStackEntry?.destination?.route
-            NavigationBarItem(
-                icon = {
-                    Icon(
-                        imageVector = Icons.Filled.Home,
-                        contentDescription = "Home"
-                    )
-                },
-                label = { Text("Home") },
-               // selected = selectedItem == 0,
-                selected = currentRoute == Screen.Home.route,
-                onClick = {
-                    // TODO: navigate to home screen by navController
-                    // selectedItem = 0
-                    navController.navigate(Screen.Home.route) {
-                        popUpTo(navController.graph.startDestinationId) { saveState = true }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                }
-            )
-            NavigationBarItem(
-                icon = {
-                    Icon(
-                        imageVector = Icons.Filled.List, contentDescription = "Screen One"
-                    )
-                },
-                label = { Text("Screen One") },
-                //selected = selectedItem == 1,
-                selected = currentRoute == Screen.ScreenOne.route,
-                onClick = {
-                    // TODO: navigate to screen one
-                    navController.navigate(Screen.ScreenOne.route) {
-                        popUpTo(navController.graph.startDestinationId) { saveState = true }
-                        launchSingleTop = true
-                        restoreState = true
-                        //selectedItem = 1
-                    }
-                }
-            )
-            NavigationBarItem(
-                icon = {
-                    Icon(
-                        imageVector = Icons.Filled.Settings,
-                        contentDescription = "Screen Two"
-                    )
-                },
-                label = { Text("Screen Two") },
-                selected = currentRoute == Screen.ScreenTwo.route,
-                //selected = selectedItem == 2,
-                onClick = {
-                    // TODO: navigate to screen two
-                    // selectedItem = 2
-                    navController.navigate(Screen.ScreenTwo.route) {
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
+            NavigationBar {
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentRoute = navBackStackEntry?.destination?.route
+
+                screens.forEach { screen ->
+                    NavigationBarItem(
+                        icon = { Icon(screen.icon, contentDescription = screen.title) },
+                        label = { Text(screen.title) },
+                        selected = currentRoute == screen.route,
+                        onClick = {
+                            navController.navigate(screen.route) {
+                                popUpTo(navController.graph.startDestinationId) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
                         }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
+                    )
                 }
-            )
+            }
         }
-    }) { innerPadding ->
+    ) { innerPadding ->
         // TODO: create a nav graph with 3 screens
         // NavHost() {}
         // composable(Screen.Home.route) { HomeScreen() }
