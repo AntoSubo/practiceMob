@@ -8,6 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.res.stringResource
 
 @Composable
 fun CounterScreen(
@@ -15,6 +16,11 @@ fun CounterScreen(
     viewModel: CounterViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val counterTitle = stringResource(R.string.counter_title, uiState.count)
+    val decrementText = stringResource(R.string.button_decrement)
+    val resetText = stringResource(R.string.button_reset)
+    val incrementText = stringResource(R.string.button_increment)
+    val historyTitle = stringResource(R.string.history_title)
 
     Column(
         modifier = modifier
@@ -23,7 +29,7 @@ fun CounterScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Счёт: ${uiState.count}",
+            text = counterTitle,
             modifier = Modifier.padding(16.dp)
         )
 
@@ -31,19 +37,19 @@ fun CounterScreen(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Button(onClick = { viewModel.decrement() }) {
-                Text("-")
+                Text(decrementText)
             }
             Button(onClick = { viewModel.reset() }) {
-                Text("Сброс")
+                Text(resetText)
             }
             Button(onClick = { viewModel.increment() }) {
-                Text("+")
+                Text(incrementText)
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = "История действий:")
+        Text(historyTitle)
 
         Column {
             for (action in uiState.history) {
