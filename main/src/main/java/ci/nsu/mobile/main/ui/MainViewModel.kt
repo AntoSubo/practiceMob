@@ -21,7 +21,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     init {
         val depositDao = AppDatabase.getDatabase(application).depositDao()
         repository = DepositRepository(depositDao)
-        history = repository.allHistory
+        history = repository.getAllHistory()
     }
 
     var initialAmount by mutableStateOf("")
@@ -98,7 +98,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             interestRate = interestRate,
             monthlyTopUp = monthlyTopUp.toDoubleOrNull() ?: 0.0,
             finalAmount = finalAmount,
-            interestEarned = interestEarned
+            interestEarned = interestEarned,
+            calculationDate = System.currentTimeMillis()
         )
         viewModelScope.launch {
             repository.insert(calc)
