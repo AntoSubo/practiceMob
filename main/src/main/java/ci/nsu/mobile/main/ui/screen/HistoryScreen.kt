@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -71,7 +72,7 @@ fun HistoryScreen(navController: NavController, viewModel: MainViewModel) {
                                 Divider(modifier = Modifier.padding(vertical = 8.dp))
                                 Text("Срок вклада: ${item.periodMonths} мес.")
                                 Text("Ставка: ${item.interestRate}%")
-                                Text("Пополнение: ${item.monthlyTopUp}/мес.")
+                                Text("Пополнение: ${item.monthlyTopUp?.toString() ?: "не указано"}/мес.")
                                 Text("Начисленные проценты: ${String.format(Locale.US, "%.2f", item.interestEarned)}")
                             }
                         }
