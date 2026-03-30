@@ -71,7 +71,7 @@ fun HistoryScreen(navController: NavController, viewModel: MainViewModel) {
                                 Divider(modifier = Modifier.padding(vertical = 8.dp))
                                 Text("Срок вклада: ${item.periodMonths} мес.")
                                 Text("Ставка: ${item.interestRate}%")
-                                Text("Пополнение: ${item.monthlyTopUp}/мес.")
+                                Text("Пополнение: ${item.monthlyTopUp?.toString() ?: "не указано"}/мес.")
                                 Text("Начисленные проценты: ${String.format(Locale.US, "%.2f", item.interestEarned)}")
                             }
                         }

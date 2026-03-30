@@ -36,8 +36,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         return when {
             months < 6 -> 15.0
             months in 6..11 -> 10.0
-            months >= 12 -> 5.0
-            else -> 0.0
+            else -> 5.0
         }
     }
 
@@ -56,8 +55,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun validateStepTwo(): String? {
+        if (periodMonths.toIntOrNull() == null) {
+            return "Сначала укажите срок вклада на предыдущем экране"
+        }
+
         if (monthlyTopUp.isBlank()) {
-            monthlyTopUp = "0"
             return null
         }
 
@@ -79,7 +81,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         var earned = 0.0
         val monthlyRate = rate / 100 / 12
 
-        for (i in 1..months) {
+        repeat(months) {
             total += topUp
             val currentMonthInterest = total * monthlyRate
             earned += currentMonthInterest
@@ -92,11 +94,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun saveCalculation() {
+        val topUp = monthlyTopUp.toDoubleOrNull()
         val calc = DepositCalculation(
             initialAmount = initialAmount.toDoubleOrNull() ?: 0.0,
             periodMonths = periodMonths.toIntOrNull() ?: 0,
             interestRate = interestRate,
-            monthlyTopUp = monthlyTopUp.toDoubleOrNull() ?: 0.0,
+            monthlyTopUp = topUp,
             finalAmount = finalAmount,
             interestEarned = interestEarned,
             calculationDate = System.currentTimeMillis()

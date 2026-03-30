@@ -35,7 +35,7 @@ fun ResultScreen(navController: NavController, viewModel: MainViewModel) {
                     Text("Стартовый взнос: ${viewModel.initialAmount}")
                     Text("Срок: ${viewModel.periodMonths} мес.")
                     Text("Ставка: ${viewModel.interestRate}%")
-                    Text("Пополнение: ${viewModel.monthlyTopUp.ifBlank { "0" }}/мес.")
+                    Text("Пополнение: ${viewModel.monthlyTopUp.ifBlank { "не указано" }}/мес.")
                     Divider(modifier = Modifier.padding(vertical = 8.dp))
                     Text("Начисленные проценты: ${String.format("%.2f", viewModel.interestEarned)}")
                     Text("Итоговая сумма: ${String.format("%.2f", viewModel.finalAmount)}", style = MaterialTheme.typography.titleLarge)
