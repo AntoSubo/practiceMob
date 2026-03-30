@@ -32,8 +32,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     var finalAmount by mutableDoubleStateOf(0.0)
     var interestEarned by mutableDoubleStateOf(0.0)
 
-    fun determineInterestRate(): Double {
-        val months = periodMonths.toIntOrNull() ?: return 0.0
+    fun determineInterestRate(months: Int): Double {
         return when {
             months < 6 -> 15.0
             months in 6..11 -> 10.0
@@ -42,10 +41,38 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun validateStepOne(): String? {
+        val amount = initialAmount.toDoubleOrNull()
+        val months = periodMonths.toIntOrNull()
+
+        return when {
+            initialAmount.isBlank() || periodMonths.isBlank() -> "Заполните все поля"
+            amount == null -> "Введите корректный стартовый взнос"
+            amount <= 0.0 -> "Стартовый взнос должен быть больше 0"
+            months == null -> "Введите срок вклада целым числом"
+            months <= 0 -> "Срок вклада должен быть больше 0"
+            else -> null
+        }
+    }
+
+    fun validateStepTwo(): String? {
+        if (monthlyTopUp.isBlank()) {
+            monthlyTopUp = "0"
+            return null
+        }
+
+        val topUp = monthlyTopUp.toDoubleOrNull()
+        return when {
+            topUp == null -> "Введите корректную сумму пополнения"
+            topUp < 0.0 -> "Пополнение не может быть отрицательным"
+            else -> null
+        }
+    }
+
     fun calculateResult() {
         val amount = initialAmount.toDoubleOrNull() ?: 0.0
         val months = periodMonths.toIntOrNull() ?: 0
-        val rate = interestRate
+        val rate = determineInterestRate(months)
         val topUp = monthlyTopUp.toDoubleOrNull() ?: 0.0
 
         var total = amount
@@ -61,6 +88,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
         finalAmount = total
         interestEarned = earned
+        interestRate = rate
     }
 
     fun saveCalculation() {
@@ -82,5 +110,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         periodMonths = ""
         interestRate = 0.0
         monthlyTopUp = ""
+        finalAmount = 0.0
+        interestEarned = 0.0
     }
 }
