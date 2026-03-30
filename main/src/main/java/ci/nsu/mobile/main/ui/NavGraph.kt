@@ -12,7 +12,7 @@ import ci.nsu.mobile.main.ui.screen.StepOneScreen
 import ci.nsu.mobile.main.ui.screen.StepTwoScreen
 
 @Composable
-fun DepositApp() {
+fun AppNavHost() {
     val navController = rememberNavController()
     val viewModel: MainViewModel = viewModel()
 
@@ -24,6 +24,3 @@ fun DepositApp() {
         composable("history") { HistoryScreen(navController, viewModel) }
     }
 }
-
-@Composable
-fun AppNavHost() = DepositApp()
