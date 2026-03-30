@@ -24,3 +24,6 @@ fun DepositApp() {
         composable("history") { HistoryScreen(navController, viewModel) }
     }
 }
+
+@Composable
+fun AppNavHost() = DepositApp()
