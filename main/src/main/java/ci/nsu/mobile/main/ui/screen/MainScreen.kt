@@ -24,7 +24,7 @@ import androidx.navigation.NavController
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(navController: NavController) {
-    val context = LocalContext.current as Activity
+    val context = LocalContext.current
 
     Scaffold(
         topBar = { TopAppBar(title = { Text("Расчёт вкладов") }) }
@@ -42,7 +42,10 @@ fun HomeScreen(navController: NavController) {
                 Text("История расчётов")
             }
             Spacer(modifier = Modifier.height(16.dp))
-            OutlinedButton(onClick = { context.finish() }, modifier = Modifier.fillMaxWidth(0.6f)) {
+            OutlinedButton(
+                onClick = { (context as? Activity)?.finish() },
+                modifier = Modifier.fillMaxWidth(0.6f)
+            ) {
                 Text("Закрыть приложение")
             }
         }
