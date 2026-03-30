@@ -1,13 +1,11 @@
-package ci.nsu.mobile.depositapp.data
+package ci.nsu.mobile.main.data
 
-import kotlinx.coroutines.flow.Flow
+import androidx.lifecycle.LiveData
 
-class DepositRepository(
-    private val dao: DepositDao
-) {
-    val allCalculations: Flow<List<DepositCalculation>> = dao.getAll()
+class DepositRepository(private val depositDao: DepositDao) {
+    val allHistory: LiveData<List<DepositCalculation>> = depositDao.getAllHistory()
 
-    suspend fun insert(calculation: DepositCalculation): Long = dao.insert(calculation)
-
-    suspend fun getById(id: Int): DepositCalculation? = dao.getById(id)
+    suspend fun insert(calculation: DepositCalculation) {
+        depositDao.insert(calculation)
+    }
 }

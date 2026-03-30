@@ -1,15 +1,11 @@
-package ci.nsu.mobile.depositapp.data
+package ci.nsu.mobile.main.data
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(
-    entities = [DepositCalculation::class],
-    version = 1,
-    exportSchema = false
-)
+@Database(entities = [DepositCalculation::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun depositDao(): DepositDao
 
@@ -19,11 +15,13 @@ abstract class AppDatabase : RoomDatabase() {
 
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
-                Room.databaseBuilder(
+                val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "deposit_database"
-                ).build().also { INSTANCE = it }
+                    "deposits_db"
+                ).build()
+                INSTANCE = instance
+                instance
             }
         }
     }
