@@ -24,6 +24,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import ci.nsu.mobile.main.data.DepositCalculation
 import ci.nsu.mobile.main.ui.MainViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -32,7 +33,7 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryScreen(navController: NavController, viewModel: MainViewModel) {
-    val historyList by viewModel.history.observeAsState(emptyList())
+    val historyList by viewModel.history.observeAsState(initial = emptyList<DepositCalculation>())
     val dateFormat = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
 
     Scaffold(

@@ -52,11 +52,13 @@ fun StepOneScreen(navController: NavController, viewModel: MainViewModel) {
                     Text("В начало")
                 }
                 Button(onClick = {
-                    if (viewModel.initialAmount.isBlank() || viewModel.periodMonths.isBlank()) {
-                        Toast.makeText(context, "Заполните все поля", Toast.LENGTH_SHORT).show()
-                    } else {
-                        viewModel.interestRate = viewModel.determineInterestRate()
+                    val validationError = viewModel.validateStepOne()
+                    if (validationError == null) {
+                        val months = viewModel.periodMonths.toInt()
+                        viewModel.interestRate = viewModel.determineInterestRate(months)
                         navController.navigate("step_two")
+                    } else {
+                        Toast.makeText(context, validationError, Toast.LENGTH_SHORT).show()
                     }
                 }) {
                     Text("Далее")
