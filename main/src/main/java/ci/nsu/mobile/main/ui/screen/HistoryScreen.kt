@@ -16,14 +16,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Observer
 import androidx.navigation.NavController
+import ci.nsu.mobile.main.data.DepositCalculation
 import ci.nsu.mobile.main.ui.MainViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -32,7 +34,13 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryScreen(navController: NavController, viewModel: MainViewModel) {
-    val historyList by viewModel.history.observeAsState(emptyList())
+    val historyState = remember { mutableStateOf(emptyList<DepositCalculation>()) }
+    DisposableEffect(viewModel.history) {
+        val observer = Observer<List<DepositCalculation>> { historyState.value = it ?: emptyList() }
+        viewModel.history.observeForever(observer)
+        onDispose { viewModel.history.removeObserver(observer) }
+    }
+    val historyList = historyState.value
     val dateFormat = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
 
     Scaffold(
