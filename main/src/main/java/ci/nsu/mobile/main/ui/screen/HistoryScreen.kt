@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Card
@@ -63,14 +63,16 @@ fun HistoryScreen(
                 Text("Нет сохранённых расчётов")
             }
         } else {
-            LazyColumn(
+            // Обычный Column с вертикальным скроллом вместо LazyColumn
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues),
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
+                    .padding(paddingValues)
+                    .verticalScroll(rememberScrollState()) // добавляем скролл
+                    .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(calculations) { calculation ->
+                calculations.forEach { calculation ->
                     HistoryItem(
                         calculation = calculation,
                         onClick = { onNavigateToDetails(calculation.id) }
