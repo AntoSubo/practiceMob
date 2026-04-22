@@ -47,7 +47,7 @@ fun StepTwoScreen(
     val rateErrorState by viewModel.rateError.collectAsState()
     val periodErrorState by viewModel.periodError.collectAsState()
 
-    // КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: сохраняем в локальные переменные
+
     val periodError = periodErrorState
     val rateError = rateErrorState
 

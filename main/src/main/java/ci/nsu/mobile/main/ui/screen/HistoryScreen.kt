@@ -63,12 +63,12 @@ fun HistoryScreen(
                 Text("Нет сохранённых расчётов")
             }
         } else {
-            // Обычный Column с вертикальным скроллом вместо LazyColumn
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .verticalScroll(rememberScrollState()) // добавляем скролл
+                    .verticalScroll(rememberScrollState())
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
