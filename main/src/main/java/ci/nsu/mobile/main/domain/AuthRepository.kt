@@ -23,9 +23,16 @@ class AuthRepository(
 
     suspend fun register(request: RegisterRequest): Result<Unit> {
         return try {
-            publicApiService.register(request)
-            Result.success(Unit)
+            val response = publicApiService.register(request)
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                val errorMsg = response.errorBody()?.string() ?: "Неизвестная ошибка"
+                android.util.Log.e("REGISTER", "Ошибка ${response.code()}: $errorMsg")
+                Result.failure(Exception(errorMsg))
+            }
         } catch (e: Exception) {
+            android.util.Log.e("REGISTER", "Исключение", e)
             Result.failure(e)
         }
     }

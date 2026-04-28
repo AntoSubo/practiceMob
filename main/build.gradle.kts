@@ -50,10 +50,11 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.8.2")
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
-
-    // Network
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    // Network (Retrofit + OkHttp + Kotlinx Serialization)
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")  // <-- для логов
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 }
