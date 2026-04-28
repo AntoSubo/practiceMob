@@ -4,7 +4,7 @@ import ci.nsu.mobile.main.data.models.*
 import ci.nsu.mobile.main.data.network.ApiService
 import ci.nsu.mobile.main.data.network.PublicApiService
 import ci.nsu.mobile.main.data.storage.TokenManager
-
+import ci.nsu.mobile.main.data.network.NetworkModule
 class AuthRepository(
     private val apiService: ApiService,
     private val publicApiService: PublicApiService,
@@ -23,6 +23,10 @@ class AuthRepository(
 
     suspend fun register(request: RegisterRequest): Result<Unit> {
         return try {
+            // логирование
+            val jsonString = NetworkModule.json.encodeToString(RegisterRequest.serializer(), request)
+            android.util.Log.d("REGISTER_JSON", jsonString)
+
             val response = publicApiService.register(request)
             if (response.isSuccessful) {
                 Result.success(Unit)

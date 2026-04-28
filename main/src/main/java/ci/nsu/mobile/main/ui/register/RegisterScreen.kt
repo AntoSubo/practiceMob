@@ -12,7 +12,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import ci.nsu.mobile.main.data.models.PersonDto
 import ci.nsu.mobile.main.data.models.RegisterRequest
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,15 +25,26 @@ fun RegisterScreen(
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var middleName by remember { mutableStateOf("") }
-    var birthDate by remember { mutableStateOf("") }
+    var birthDateInput by remember { mutableStateOf("") }
     var gender by remember { mutableStateOf("") }
     var groupId by remember { mutableStateOf<Int?>(null) }
     var login by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
-    var expanded by remember { mutableStateOf(false) }
-
+    var expandedGroup by remember { mutableStateOf(false) }
+    var expandedGender by remember { mutableStateOf(false) }
+    val genderOptions = listOf("MALE", "FEMALE")
+    fun convertDate(input: String): String {
+        val parts = input.split(".")
+        if (parts.size == 3) {
+            val day = parts[0].padStart(2, '0')
+            val month = parts[1].padStart(2, '0')
+            val year = parts[2]
+            return "$year-$month-$day"
+        }
+        return input
+    }
     LaunchedEffect(state.success) {
         if (state.success) {
             Toast.makeText(context, "Регистрация успешна", Toast.LENGTH_SHORT).show()
@@ -56,33 +66,68 @@ fun RegisterScreen(
         Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(value = middleName, onValueChange = { middleName = it }, label = { Text("Отчество") }, modifier = Modifier.fillMaxWidth())
         Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(value = birthDate, onValueChange = { birthDate = it }, label = { Text("Дата рождения") }, modifier = Modifier.fillMaxWidth())
-        Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(value = gender, onValueChange = { gender = it }, label = { Text("Пол") }, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(
+            value = birthDateInput,
+            onValueChange = { birthDateInput = it },
+            label = { Text("Дата рождения (ДД.ММ.ГГГГ)") },
+            placeholder = { Text("31.01.2000") },
+            modifier = Modifier.fillMaxWidth()
+        )
         Spacer(modifier = Modifier.height(8.dp))
 
+
         ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = { expanded = it }
+            expanded = expandedGender,
+            onExpandedChange = { expandedGender = it }
+        ) {
+            OutlinedTextField(
+                value = gender,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Пол") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedGender) },
+                modifier = Modifier.fillMaxWidth().menuAnchor()
+            )
+            ExposedDropdownMenu(
+                expanded = expandedGender,
+                onDismissRequest = { expandedGender = false }
+            ) {
+                genderOptions.forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(option) },
+                        onClick = {
+                            gender = option
+                            expandedGender = false
+                        }
+                    )
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+
+
+        ExposedDropdownMenuBox(
+            expanded = expandedGroup,
+            onExpandedChange = { expandedGroup = it }
         ) {
             OutlinedTextField(
                 value = state.groups.find { it.id == groupId }?.name ?: "",
                 onValueChange = {},
                 readOnly = true,
                 label = { Text("Группа") },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedGroup) },
                 modifier = Modifier.fillMaxWidth().menuAnchor()
             )
             ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
+                expanded = expandedGroup,
+                onDismissRequest = { expandedGroup = false }
             ) {
                 state.groups.forEach { group ->
                     DropdownMenuItem(
                         text = { Text(group.name) },
                         onClick = {
                             groupId = group.id
-                            expanded = false
+                            expandedGroup = false
                         }
                     )
                 }
@@ -108,12 +153,26 @@ fun RegisterScreen(
 
         Button(
             onClick = {
-                val person = PersonDto(firstName, lastName, middleName, birthDate, gender, groupId ?: 0)
-                val request = RegisterRequest(login, password, email, phone, person = person)
+                val finalDate = convertDate(birthDateInput)
+                val person = PersonDto(
+                    firstName = firstName,
+                    lastName = lastName,
+                    middleName = middleName.ifBlank { "" },
+                    birthDate = finalDate,
+                    gender = gender,
+                    groupId = groupId ?: 0
+                )
+                val request = RegisterRequest(
+                    login = login,
+                    password = password,
+                    email = email,
+                    phoneNumber = phone,
+                    person = person
+                )
                 viewModel.register(request)
             },
             modifier = Modifier.fillMaxWidth(),
-            enabled = !state.isLoading && groupId != null
+            enabled = !state.isLoading && groupId != null && gender.isNotEmpty()
         ) {
             if (state.isLoading) {
                 CircularProgressIndicator(modifier = Modifier.size(24.dp))
