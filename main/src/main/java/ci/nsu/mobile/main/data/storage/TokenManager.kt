@@ -3,24 +3,24 @@ package ci.nsu.mobile.main.data.storage
 import android.content.Context
 import android.content.SharedPreferences
 
-class TokenManager(context: Context) {
+object TokenManager {
+    private lateinit var prefs: SharedPreferences
 
-    private val prefs: SharedPreferences =
-        context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
-
-    fun saveToken(token: String) {
-        prefs.edit().putString("jwt_token", token).apply()
+    fun init(context: Context) {
+        prefs = context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
     }
 
-    fun getToken(): String? {
-        return prefs.getString("jwt_token", null)
-    }
+    var token: String?
+        get() = prefs.getString("jwt_token", null)
+        set(value) {
+            prefs.edit().putString("jwt_token", value).apply()
+        }
 
-    fun clearToken() {
-        prefs.edit().remove("jwt_token").apply()
+    fun clear() {
+        token = null
     }
 
     fun isLoggedIn(): Boolean {
-        return getToken() != null
+        return token != null
     }
 }

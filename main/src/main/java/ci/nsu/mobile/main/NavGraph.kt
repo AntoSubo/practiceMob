@@ -24,7 +24,6 @@ sealed class Screen(val route: String) {
 fun NavGraph(
     navController: NavHostController,
     authRepository: AuthRepository,
-    tokenManager: TokenManager
 ) {
     NavHost(navController = navController, startDestination = Screen.Login.route) {
         composable(route = Screen.Login.route) {

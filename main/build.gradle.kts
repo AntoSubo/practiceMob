@@ -42,6 +42,7 @@ android {
 
 dependencies {
     // Compose
+    implementation("androidx.compose.foundation:foundation")
     implementation(platform("androidx.compose:compose-bom:2024.02.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
@@ -53,6 +54,7 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     // Network (Retrofit + OkHttp + Kotlinx Serialization)
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation(platform("androidx.compose:compose-bom:2024.09.00"))
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")  // <-- для логов

@@ -30,7 +30,9 @@ fun MainScreen(
 
     Column(modifier = Modifier.fillMaxSize()) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("Пользователи", style = MaterialTheme.typography.headlineSmall)

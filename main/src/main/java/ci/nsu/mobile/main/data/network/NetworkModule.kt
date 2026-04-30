@@ -34,10 +34,9 @@ object NetworkModule {
             .create(PublicApiService::class.java)
     }
 
-    fun provideApiService(tokenManager: TokenManager): ApiService {
+    fun provideApiService(): ApiService {
         val client = OkHttpClient.Builder()
-            .addInterceptor(AuthInterceptor(tokenManager))
-            .addInterceptor(contentTypeInterceptor)
+            .addInterceptor(AuthInterceptor())
             .build()
         return Retrofit.Builder()
             .baseUrl(BASE_URL)

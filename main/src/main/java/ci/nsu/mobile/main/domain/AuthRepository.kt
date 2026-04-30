@@ -7,14 +7,13 @@ import ci.nsu.mobile.main.data.storage.TokenManager
 import ci.nsu.mobile.main.data.network.NetworkModule
 class AuthRepository(
     private val apiService: ApiService,
-    private val publicApiService: PublicApiService,
-    private val tokenManager: TokenManager
+    private val publicApiService: PublicApiService
 ) {
 
     suspend fun login(login: String, password: String): Result<Unit> {
         return try {
             val response = publicApiService.login(LoginRequest(login, password))
-            tokenManager.saveToken(response.token)
+            TokenManager.token = response.token
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -23,20 +22,9 @@ class AuthRepository(
 
     suspend fun register(request: RegisterRequest): Result<Unit> {
         return try {
-            // логирование
-            val jsonString = NetworkModule.json.encodeToString(RegisterRequest.serializer(), request)
-            android.util.Log.d("REGISTER_JSON", jsonString)
-
-            val response = publicApiService.register(request)
-            if (response.isSuccessful) {
-                Result.success(Unit)
-            } else {
-                val errorMsg = response.errorBody()?.string() ?: "Неизвестная ошибка"
-                android.util.Log.e("REGISTER", "Ошибка ${response.code()}: $errorMsg")
-                Result.failure(Exception(errorMsg))
-            }
+            publicApiService.register(request)
+            Result.success(Unit)
         } catch (e: Exception) {
-            android.util.Log.e("REGISTER", "Исключение", e)
             Result.failure(e)
         }
     }
@@ -58,6 +46,6 @@ class AuthRepository(
     }
 
     fun logout() {
-        tokenManager.clearToken()
+        TokenManager.clear()
     }
 }
