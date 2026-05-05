@@ -1,8 +1,8 @@
 package ci.nsu.mobile.main
 
 import android.app.Application
-import ci.nsu.mobile.main.data.AppDatabase
-import ci.nsu.mobile.main.data.DepositRepository
+import ci.nsu.mobile.main.data.local.AppDatabase
+import ci.nsu.mobile.main.domain.DepositRepository
 
 class App : Application() {
     override fun onCreate() {

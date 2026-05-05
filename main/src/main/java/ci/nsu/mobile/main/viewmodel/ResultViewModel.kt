@@ -2,8 +2,8 @@ package ci.nsu.mobile.main.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ci.nsu.mobile.main.data.DepositCalculation
-import ci.nsu.mobile.main.data.DepositRepository
+import ci.nsu.mobile.main.data.local.DepositCalculation
+import ci.nsu.mobile.main.domain.DepositRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

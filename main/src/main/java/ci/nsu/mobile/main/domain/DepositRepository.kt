@@ -1,5 +1,8 @@
-package ci.nsu.mobile.main.data
+package ci.nsu.mobile.main.domain
 
+import ci.nsu.mobile.main.data.local.AppDatabase
+import ci.nsu.mobile.main.data.local.DepositCalculation
+import ci.nsu.mobile.main.data.local.DepositDao
 import kotlinx.coroutines.flow.Flow
 
 object DepositRepository {

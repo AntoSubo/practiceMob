@@ -21,7 +21,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import ci.nsu.mobile.main.data.DepositCalculation
+import ci.nsu.mobile.main.data.local.DepositCalculation
 import ci.nsu.mobile.main.viewmodel.ResultViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
