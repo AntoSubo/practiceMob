@@ -1,4 +1,4 @@
-package ci.nsu.mobile.main.ui.register
+package ci.nsu.mobile.main.ui.auth
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
@@ -25,29 +25,18 @@ fun RegisterScreen(
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var middleName by remember { mutableStateOf("") }
-    var birthDateInput by remember { mutableStateOf("") }
+    var birthDate by remember { mutableStateOf("") }
     var gender by remember { mutableStateOf("") }
     var groupId by remember { mutableStateOf<Int?>(null) }
     var login by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
-    var expandedGroup by remember { mutableStateOf(false) }
-    var expandedGender by remember { mutableStateOf(false) }
-    val genderOptions = listOf("MALE", "FEMALE")
-    fun convertDate(input: String): String {
-        val parts = input.split(".")
-        if (parts.size == 3) {
-            val day = parts[0].padStart(2, '0')
-            val month = parts[1].padStart(2, '0')
-            val year = parts[2]
-            return "$year-$month-$day"
-        }
-        return input
-    }
+    var expanded by remember { mutableStateOf(false) }
+
     LaunchedEffect(state.success) {
         if (state.success) {
-            Toast.makeText(context, "Регистрация успешна", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Успешно", Toast.LENGTH_SHORT).show()
             onRegisterSuccess()
             viewModel.resetSuccess()
         }
@@ -58,134 +47,53 @@ fun RegisterScreen(
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Text("Регистрация", style = MaterialTheme.typography.headlineMedium)
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(value = firstName, onValueChange = { firstName = it }, label = { Text("Имя") }, modifier = Modifier.fillMaxWidth())
-        Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(value = lastName, onValueChange = { lastName = it }, label = { Text("Фамилия") }, modifier = Modifier.fillMaxWidth())
-        Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(value = middleName, onValueChange = { middleName = it }, label = { Text("Отчество") }, modifier = Modifier.fillMaxWidth())
-        Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = birthDateInput,
-            onValueChange = { birthDateInput = it },
-            label = { Text("Дата рождения (ДД.ММ.ГГГГ)") },
-            placeholder = { Text("31.01.2000") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(8.dp))
+        OutlinedTextField(value = birthDate, onValueChange = { birthDate = it }, label = { Text("Дата рождения") }, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(value = gender, onValueChange = { gender = it }, label = { Text("Пол") }, modifier = Modifier.fillMaxWidth())
 
-
-        ExposedDropdownMenuBox(
-            expanded = expandedGender,
-            onExpandedChange = { expandedGender = it }
-        ) {
-            OutlinedTextField(
-                value = gender,
-                onValueChange = {},
-                readOnly = true,
-                label = { Text("Пол") },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedGender) },
-                modifier = Modifier.fillMaxWidth().menuAnchor()
-            )
-            ExposedDropdownMenu(
-                expanded = expandedGender,
-                onDismissRequest = { expandedGender = false }
-            ) {
-                genderOptions.forEach { option ->
-                    DropdownMenuItem(
-                        text = { Text(option) },
-                        onClick = {
-                            gender = option
-                            expandedGender = false
-                        }
-                    )
-                }
-            }
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-
-
-        ExposedDropdownMenuBox(
-            expanded = expandedGroup,
-            onExpandedChange = { expandedGroup = it }
-        ) {
+        ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
             OutlinedTextField(
                 value = state.groups.find { it.id == groupId }?.name ?: "",
-                onValueChange = {},
-                readOnly = true,
+                onValueChange = {}, readOnly = true,
                 label = { Text("Группа") },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedGroup) },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                 modifier = Modifier.fillMaxWidth().menuAnchor()
             )
-            ExposedDropdownMenu(
-                expanded = expandedGroup,
-                onDismissRequest = { expandedGroup = false }
-            ) {
+            ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                 state.groups.forEach { group ->
                     DropdownMenuItem(
                         text = { Text(group.name) },
-                        onClick = {
-                            groupId = group.id
-                            expandedGroup = false
-                        }
+                        onClick = { groupId = group.id; expanded = false }
                     )
                 }
             }
         }
-        Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(value = login, onValueChange = { login = it }, label = { Text("Логин") }, modifier = Modifier.fillMaxWidth())
-        Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Пароль") },
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(8.dp))
+        OutlinedTextField(value = password, onValueChange = { password = it }, label = { Text("Пароль") },
+            visualTransformation = PasswordVisualTransformation(), modifier = Modifier.fillMaxWidth())
         OutlinedTextField(value = email, onValueChange = { email = it }, label = { Text("Email") }, modifier = Modifier.fillMaxWidth())
-        Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(value = phone, onValueChange = { phone = it }, label = { Text("Телефон") }, modifier = Modifier.fillMaxWidth())
-        Spacer(modifier = Modifier.height(16.dp))
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         Button(
             onClick = {
-                val finalDate = convertDate(birthDateInput)
-                val person = PersonDto(
-                    firstName = firstName,
-                    lastName = lastName,
-                    middleName = middleName.ifBlank { "" },
-                    birthDate = finalDate,
-                    gender = gender,
-                    groupId = groupId ?: 0
-                )
-                val request = RegisterRequest(
-                    login = login,
-                    password = password,
-                    email = email,
-                    phoneNumber = phone,
-                    person = person
-                )
-                viewModel.register(request)
+                val person = PersonDto(firstName, lastName, middleName, birthDate, gender, groupId ?: 0)
+                viewModel.register(RegisterRequest(login, password, email, phone, person = person))
             },
             modifier = Modifier.fillMaxWidth(),
-            enabled = !state.isLoading && groupId != null && gender.isNotEmpty()
+            enabled = !state.isLoading && groupId != null
         ) {
-            if (state.isLoading) {
-                CircularProgressIndicator(modifier = Modifier.size(24.dp))
-            } else {
-                Text("Зарегистрироваться")
-            }
+            if (state.isLoading) CircularProgressIndicator(modifier = Modifier.size(24.dp))
+            else Text("Зарегистрироваться")
         }
 
-        if (state.isLoadingGroups) {
-            CircularProgressIndicator(modifier = Modifier.size(24.dp))
-        }
-        state.groupsError?.let {
-            Text("Ошибка загрузки групп: $it", color = MaterialTheme.colorScheme.error)
-        }
+        if (state.isLoadingGroups) CircularProgressIndicator(modifier = Modifier.size(24.dp))
+        state.groupsError?.let { Text("Ошибка: $it", color = MaterialTheme.colorScheme.error) }
     }
 }

@@ -1,4 +1,4 @@
-package ci.nsu.mobile.main.ui.login
+package ci.nsu.mobile.main.ui.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class LoginViewModel(private val authRepository: AuthRepository) : ViewModel() {
-
     private val _state = MutableStateFlow(LoginState())
     val state: StateFlow<LoginState> = _state
 

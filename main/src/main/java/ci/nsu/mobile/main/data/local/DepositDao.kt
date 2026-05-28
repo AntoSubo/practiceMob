@@ -1,11 +1,14 @@
 package ci.nsu.mobile.main.data.local
 
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DepositDao {
-    @Query("SELECT * FROM deposit_calculations ORDER BY calculationDate DESC")
-    fun getAllCalculations(): Flow<List<DepositCalculation>>
+    @Query("SELECT * FROM deposit_calculations WHERE userId = :userId ORDER BY calculationDate DESC")
+    fun getCalculationsByUserId(userId: Long): Flow<List<DepositCalculation>>
 
     @Insert
     suspend fun insert(calculation: DepositCalculation)

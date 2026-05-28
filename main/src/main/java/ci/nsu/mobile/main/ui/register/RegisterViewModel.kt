@@ -1,16 +1,15 @@
-package ci.nsu.mobile.main.ui.register
+package ci.nsu.mobile.main.ui.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ci.nsu.mobile.main.domain.AuthRepository
 import ci.nsu.mobile.main.data.models.GroupDto
 import ci.nsu.mobile.main.data.models.RegisterRequest
+import ci.nsu.mobile.main.domain.AuthRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class RegisterViewModel(private val authRepository: AuthRepository) : ViewModel() {
-
     private val _state = MutableStateFlow(RegisterState())
     val state: StateFlow<RegisterState> = _state
 
@@ -25,8 +24,7 @@ class RegisterViewModel(private val authRepository: AuthRepository) : ViewModel(
             _state.value = if (result.isSuccess) {
                 _state.value.copy(
                     isLoadingGroups = false,
-                    groups = result.getOrNull() ?: emptyList(),
-                    groupsError = null
+                    groups = result.getOrNull() ?: emptyList()
                 )
             } else {
                 _state.value.copy(

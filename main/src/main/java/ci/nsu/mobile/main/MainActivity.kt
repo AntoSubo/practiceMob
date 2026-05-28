@@ -3,32 +3,27 @@ package ci.nsu.mobile.main
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.MaterialTheme
-import androidx.navigation.compose.rememberNavController
-import ci.nsu.mobile.main.data.network.NetworkModule
 import ci.nsu.mobile.main.data.storage.TokenManager
-import ci.nsu.mobile.main.domain.AuthRepository
+import ci.nsu.mobile.main.di.ServiceLocator
+import ci.nsu.mobile.main.navigation.NavGraph
 
 class MainActivity : ComponentActivity() {
-
-    private lateinit var authRepository: AuthRepository
+    private lateinit var serviceLocator: ServiceLocator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+
         TokenManager.init(this)
         TokenManager.clear()
 
-        val apiService = NetworkModule.provideApiService()
-        val publicApiService = NetworkModule.providePublicApiService()
-        authRepository = AuthRepository(apiService, publicApiService)
+        serviceLocator = ServiceLocator(this)
 
         setContent {
             MaterialTheme {
-                val navController = rememberNavController()
-                NavGraph(
-                    navController = navController,
-                    authRepository = authRepository
-                )
+                NavGraph(serviceLocator = serviceLocator)
             }
         }
     }

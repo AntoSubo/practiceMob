@@ -1,4 +1,4 @@
-package ci.nsu.mobile.main.ui.login
+package ci.nsu.mobile.main.ui.auth
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
@@ -11,13 +11,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 
 @Composable
 fun LoginScreen(
     onLoginSuccess: () -> Unit,
     viewModel: LoginViewModel,
-    navController: NavController? = null
+    onNavigateToRegister: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
@@ -36,9 +35,7 @@ fun LoginScreen(
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
+        modifier = Modifier.fillMaxSize().padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -46,16 +43,13 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
-            value = login,
-            onValueChange = { login = it },
-            label = { Text("Логин") },
-            modifier = Modifier.fillMaxWidth()
+            value = login, onValueChange = { login = it },
+            label = { Text("Логин") }, modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
+            value = password, onValueChange = { password = it },
             label = { Text("Пароль") },
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -68,18 +62,12 @@ fun LoginScreen(
             modifier = Modifier.fillMaxWidth(),
             enabled = !state.isLoading
         ) {
-            if (state.isLoading) {
-                CircularProgressIndicator(modifier = Modifier.size(24.dp))
-            } else {
-                Text("Войти")
-            }
+            if (state.isLoading) CircularProgressIndicator(modifier = Modifier.size(24.dp))
+            else Text("Войти")
         }
 
         Spacer(modifier = Modifier.height(8.dp))
-
-        TextButton(onClick = {
-            navController?.navigate("register")
-        }) {
+        TextButton(onClick = onNavigateToRegister) {
             Text("Нет аккаунта? Зарегистрироваться")
         }
     }
