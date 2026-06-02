@@ -18,6 +18,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+data class RateOption(
+    val rate: Double,
+    val minMonths: Int,
+    val maxMonths: Int,
+    val label: String
+)
+
 class NewCalculationViewModel(private val serviceLocator: ServiceLocator) : ViewModel() {
     private val _initialAmount = MutableStateFlow("")
     val initialAmount: StateFlow<String> = _initialAmount
@@ -34,41 +41,28 @@ class NewCalculationViewModel(private val serviceLocator: ServiceLocator) : View
     private val _result = MutableStateFlow<DepositCalculation?>(null)
     val result: StateFlow<DepositCalculation?> = _result
 
-    private val _availableRates = MutableStateFlow<List<Double>>(emptyList())
-    val availableRates: StateFlow<List<Double>> = _availableRates
+    val availableRates: List<RateOption> = listOf(
+        RateOption(5.0, 1, 5, "5% (1-5 месяцев)"),
+        RateOption(10.0, 6, 11, "10% (6-11 месяцев)"),
+        RateOption(15.0, 12, Int.MAX_VALUE, "15% (от 12 месяцев)")
+    )
 
-    private val _selectedRate = MutableStateFlow<Double?>(null)
-    val selectedRate: StateFlow<Double?> = _selectedRate
+    private val _selectedRate = MutableStateFlow<RateOption?>(null)
+    val selectedRate: StateFlow<RateOption?> = _selectedRate
 
-    private val _periodError = MutableStateFlow<String?>(null)
-    val periodError: StateFlow<String?> = _periodError
-
-    fun updatePeriodMonthsAndRecalculate(v: String) {
-        _periodMonths.value = v
-        val months = v.toIntOrNull() ?: 0
-        if (months <= 0) {
-            _availableRates.value = emptyList()
-            _selectedRate.value = null
-            _periodError.value = "Укажите срок вклада"
-        } else {
-            _periodError.value = null
-            _availableRates.value = when {
-                months < 6 -> listOf(15.0)
-                months < 12 -> listOf(10.0)
-                else -> listOf(5.0)
-            }
-            _selectedRate.value = _availableRates.value.firstOrNull()
+    fun selectRate(option: RateOption) {
+        _selectedRate.value = option
+        val currentMonths = _periodMonths.value.toIntOrNull() ?: 0
+        if (currentMonths !in option.minMonths..option.maxMonths) {
+            val closest = if (currentMonths < option.minMonths) option.minMonths else option.maxMonths
+            _periodMonths.value = closest.toString()
         }
-    }
-
-    fun selectRate(rate: Double) {
-        _selectedRate.value = rate
     }
 
     fun calculate() {
         val p = _initialAmount.value.toDoubleOrNull() ?: 0.0
         val n = _periodMonths.value.toIntOrNull() ?: 0
-        val r = (_selectedRate.value ?: 0.0) / 100.0 / 12.0
+        val r = (_selectedRate.value?.rate ?: 0.0) / 100.0 / 12.0
         val m = _monthlyTopUp.value.toDoubleOrNull()
         var total = p
         var earned = 0.0
@@ -82,13 +76,12 @@ class NewCalculationViewModel(private val serviceLocator: ServiceLocator) : View
             userId = 1L,
             initialAmount = p,
             periodMonths = n,
-            interestRate = _selectedRate.value ?: 0.0,
+            interestRate = _selectedRate.value?.rate ?: 0.0,
             monthlyTopUp = m,
             finalAmount = total,
             interestEarned = earned,
             calculationDate = System.currentTimeMillis()
         )
-
     }
 
     fun save() {
@@ -108,9 +101,8 @@ fun NewCalculationTab(serviceLocator: ServiceLocator) {
     val periodMonths by viewModel.periodMonths.collectAsState()
     val monthlyTopUp by viewModel.monthlyTopUp.collectAsState()
     val result by viewModel.result.collectAsState()
-    val availableRates by viewModel.availableRates.collectAsState()
+    val availableRates = viewModel.availableRates
     val selectedRate by viewModel.selectedRate.collectAsState()
-    val periodError by viewModel.periodError.collectAsState()
     var expanded by remember { mutableStateOf(false) }
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
@@ -126,38 +118,34 @@ fun NewCalculationTab(serviceLocator: ServiceLocator) {
         Spacer(modifier = Modifier.height(4.dp))
 
         OutlinedTextField(
-            value = periodMonths, onValueChange = viewModel::updatePeriodMonthsAndRecalculate,
+            value = periodMonths, onValueChange = viewModel::updatePeriodMonths,
             label = { Text("Срок (мес.)") },
-            isError = periodError != null,
-            supportingText = { periodError?.let { Text(it) } },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(4.dp))
 
-        // Выпадающий список ставок
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = { expanded = it }
         ) {
             OutlinedTextField(
-                value = selectedRate?.let { "$it%" } ?: "Выберите ставку",
+                value = selectedRate?.label ?: "Выберите ставку",
                 onValueChange = {},
                 readOnly = true,
-                label = { Text("Ставка") },
+                label = { Text("Ставка (автоподстановка срока)") },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                modifier = Modifier.fillMaxWidth().menuAnchor(),
-                isError = availableRates.isEmpty() && periodError == null
+                modifier = Modifier.fillMaxWidth().menuAnchor()
             )
             ExposedDropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false }
             ) {
-                availableRates.forEach { rate ->
+                availableRates.forEach { option ->
                     DropdownMenuItem(
-                        text = { Text("$rate%") },
+                        text = { Text(option.label) },
                         onClick = {
-                            viewModel.selectRate(rate)
+                            viewModel.selectRate(option)
                             expanded = false
                         }
                     )

@@ -92,7 +92,6 @@ fun MyCalculationsTab(serviceLocator: ServiceLocator, onLogout: () -> Unit) {
     val dateFormat = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
 
     if (selectedCalculation != null) {
-        // Экран деталей
         val calc = selectedCalculation!!
         Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
             Text("Детали расчёта", style = MaterialTheme.typography.headlineSmall)
@@ -128,7 +127,6 @@ fun MyCalculationsTab(serviceLocator: ServiceLocator, onLogout: () -> Unit) {
             }
         }
     } else {
-        // Список расчётов
         Column(modifier = Modifier.fillMaxSize()) {
             Row(
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
