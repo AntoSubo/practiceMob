@@ -6,6 +6,10 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
+ksp {
+    arg("room.generateKotlin", "true")
+}
+
 android {
     namespace = "ci.nsu.mobile.main"
     compileSdk = 34
@@ -35,10 +39,6 @@ android {
 
     buildFeatures {
         compose = true
-    }
-
-    tasks.withType(org.gradle.api.tasks.compile.JavaCompile::class.java) {
-        enabled = false
     }
 }
 
